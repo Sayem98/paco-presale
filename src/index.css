@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    height: 100vh;
+    box-sizing: border-box;
+  }
+  body {
+    /* padding: 2rem; */
+    height: 100vh;
+    background-image: url('../public/images/bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+
+    @apply bg-white;
+  }
+  .btn-active {
+    @apply border border-black;
+    @apply text-gray-900;
+  }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
