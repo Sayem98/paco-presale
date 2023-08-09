@@ -1,23 +1,24 @@
 import Web3 from "web3";
 import { TOKEN_ABI, PRESALE_ABI, PRESALE_ADDRESS, MULTICALL_ABI, MULTICALL_ADDRESS } from "../utils/contract";
   import {toast } from 'react-toastify';
-const rpc = "https://sepolia.infura.io/v3/4ff7ad85bb8046808700ce458a9180ad";
+const rpc = "https://bsc.getblock.io/fc461820-6d93-4ac2-bec1-16cc38e1a83e/mainnet/";
 
 function useContract() {
   const getWeb3 = async (type) => {
-    if (!window.ethereum) {
-      toast.error("Please install metamask");
-      return;
-    }
     if (type === "r") {
       try{
-        const web3 = new Web3(window.ethereum);
+        const web3 = new Web3(rpc);
+        console.log(web3);
         return { web3 };
       }catch(err){
         toast.error("Error in getting web3");
       }
       
     } else if (type === "w") {
+      if (!window.ethereum) {
+        toast.error("Please install metamask");
+        return;
+      }
       try{
         const web3 = new Web3(window.ethereum);
         return { web3 };
@@ -28,11 +29,13 @@ function useContract() {
   };
 
   const getContract = async (abi, address, type) => {
-    if (!window.ethereum) {
+    if (type ==='w' && !window.ethereum) {
       toast.error("Please install metamask");
       return;
     }
+    console.log(type);
     try{
+      
       const { web3 } = await getWeb3(type);
       const contract = new web3.eth.Contract(abi, address);
       return contract;
@@ -42,10 +45,7 @@ function useContract() {
   };
 
   const getAccountBalance = async (address) => {
-    if (!window.ethereum) {
-      toast.error("Please install metamask");
-      return;
-    }
+
     const { web3 } = await getWeb3("r");
     try{
       let balance = await web3.eth.getBalance(address);
@@ -57,10 +57,6 @@ function useContract() {
   };
 
   const getTokenBalance = async (address, tokenAddress) => {
-    if (!window.ethereum) {
-      toast.error("Please install metamask");
-      return;
-    }
     try{
       const token = await getContract(TOKEN_ABI, tokenAddress, "r");
       let balance = await token.methods.balanceOf(address).call();
@@ -75,13 +71,11 @@ function useContract() {
   
 
   const getData = async (abi, address) => {
-
-    if (!window.ethereum) {
-      toast.error("Please install metamask");
-      return;
-    }
+    console.log('getData');
     
     const contract = await getContract(abi, address, "r");
+    console.log(contract);
+    console.log(await contract.methods.presale_time().call());
 
     const multicall = await getContract(MULTICALL_ABI, MULTICALL_ADDRESS, "r");
 
@@ -98,13 +92,15 @@ function useContract() {
       [address, contract.methods.getETHPrice().encodeABI()],
     ];
 
-    const {web3} = await getWeb3("w");
+    const {web3} = await getWeb3("r");
     var data;
     try{
      data = await multicall.methods.aggregate(calls).call();
     }catch(err){
       toast.error("Error in getting data");
     }
+
+    console.log(data);
 
 
     let presale_time = parseInt(data.returnData[0]);
@@ -118,6 +114,8 @@ function useContract() {
     // const max_perchase_amount = web3.utils.fromWei(data.returnData[7], "ether");
     const total_token_for_sale = web3.utils.fromWei(data.returnData[6], "ether");
     const getETHPrice = web3.utils.fromWei(data.returnData[7], "nano") * 10;
+
+    console.log(presale_time, token, usdc, usdt, rate, total_sold, total_token_for_sale, getETHPrice);
 
     return {
       presale_time,
@@ -134,15 +132,11 @@ function useContract() {
   };
 
   const checkApprove = async (address, acount) => {
-    if (!window.ethereum) {
-      toast.error("Please install metamask");
-      return;
-    }
     if(!acount){
       return;
     }
     try{
-      const token = await getContract(TOKEN_ABI, address, "w");
+      const token = await getContract(TOKEN_ABI, address, "r");
     const allowance = await token.methods
       .allowance(acount, PRESALE_ADDRESS)
       .call();

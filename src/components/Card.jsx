@@ -43,8 +43,6 @@ function Card() {
         usdt,
         rate,
         total_sold,
-        // min_perchase_amount,
-        // max_perchase_amount,
         total_token_for_sale,
         getETHPrice,
       } = await getData(PRESALE_ABI, PRESALE_ADDRESS);
@@ -55,19 +53,19 @@ function Card() {
         usdt,
         rate,
         total_sold,
-        // min_perchase_amount,
-        // max_perchase_amount,
         total_token_for_sale,
         getETHPrice,
       });
       setIsLoading(false);
     };
-    if(acount){
-      fetchContract();
-    }else{
-      setIsLoading(false);
-    }
-  }, [change, acount]);
+    // get chain id
+
+    console.log(data);
+    setIsLoading(false);
+     
+    fetchContract();
+    
+  }, [change]);
 
   useEffect(() => {
     const check = async () => {
@@ -84,13 +82,14 @@ function Card() {
       }
     };
 
-    if (data) {
+    if (data && acount) {
       check();
     }
   }, [paymentType, acount, amount, change]);
 
   useEffect(() => {
     const getBalance = async () => {
+
       if (acount && data) {
         const balance = await getAccountBalance(acount);
         // console.log(balance);
@@ -191,8 +190,9 @@ function Card() {
       setAmount(0);
     }
   };
+  console.log(data);
   return (
-    <div className="bg-transparent w-[25rem] md:w-[28rem] md:h-[80%] rounded-xl border-[3px] border-black overflow-hidden relative">
+    <div className="bg-black w-[25rem] md:w-[28rem] md:h-[80%] rounded-xl border-[3px] border-black overflow-hidden relative">
       <div className="flex flex-row justify-center mt-2">
         <CustomConnectKitButton />
       </div>
@@ -220,7 +220,7 @@ function Card() {
         </div>
 
         <h2 className="text-base md:text-lg font-bold tracking-wider py-2">
-          BUY IN BEFORE PRICE INCREASES!
+        $PACO PRESALE IS LIVE
         </h2>
 
         <div className="bg-white w-full rounded-xl h-6 flex items-center justify-center relative">

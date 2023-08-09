@@ -5,8 +5,8 @@ import { bsc } from "wagmi/chains";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ALCHEMY_ID = "ab63e207636043c7bae04e1beb6ddd1d";
-const WALLETCONNECT_PROJECT_ID = "f6adbe04febb278b8d497cf6a75276de";
+const ALCHEMY_ID = "CEf2CqkOIHpvGjTBCGKDnceDQz0L-BIw";
+const WALLETCONNECT_PROJECT_ID = "409ca735da2a96e0fc9c913a4093d95b";
 const chains = [bsc];
 
 const config = createConfig(
